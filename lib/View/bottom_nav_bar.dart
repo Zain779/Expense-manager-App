@@ -1,8 +1,9 @@
 import 'package:expanse_manager/Utils/colors.dart';
 import 'package:expanse_manager/View/home_screen.dart';
 import 'package:expanse_manager/View/profile_screen.dart';
+import 'package:expanse_manager/View/statistics_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
+// import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({Key? key}) : super(key: key);
@@ -69,7 +70,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   final tabs = [
     HomeScreen(),
     const Center(
-      child: Text('Statistics'),
+      child: StatisticsScreen(),
     ),
     const Center(
       child: Text('Wallet'),

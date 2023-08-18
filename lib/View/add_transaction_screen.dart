@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../Controller/db_helper.dart';
-import '../Services/session_manager.dart';
 
 class AddTransactionScreen extends StatefulWidget {
   const AddTransactionScreen({Key? key, required this.myCategory})
@@ -270,23 +269,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                           DbHelper dbHelper = DbHelper();
                           await dbHelper.addData(
                               amount!, selectDate, note, type, selectedOption!);
-                          // try {
-                          //   ref
-                          //       .child(SessionController().userID.toString())
-                          //       .update({
-                          //     'amount': amount,
-                          //     // 'selectdate': selectDate,
-                          //     'note': note,
-                          //     'type': type,
-                          //     'selectoption': selectedOption
-                          //   }).then((value) {
-                          //     utils().toastMessage('Added');
-                          //   }).onError((error, stackTrace) {
-                          //     utils().toastMessage(error.toString());
-                          //   });
-                          // } catch (e) {
-                          //   utils().toastMessage(e.toString());
-                          // }
+
                           Navigator.pop(context);
                         } else {
                           utils().toastMessage('Not all fields provided');

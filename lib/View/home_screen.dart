@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../Controller/db_helper.dart';
-import '../Model/transaction.dart';
 import '../Services/session_manager.dart';
 import 'add_transaction_screen.dart';
 import 'category_details_screen.dart';
 import '../Utils/colors.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -23,8 +22,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     mloadCategories();
-    // box = Hive.box('money');
-    // fetch();
   }
 
   mloadCategories() async {
@@ -50,25 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  // late Box box;
-
-  // Future<List<TransactionModel>> fetch() async {
-  //   if (box.values.isEmpty) {
-  //     return Future.value([]);
-  //   } else {
-  //     List<TransactionModel> items = [];
-  //     box.toMap().values.forEach((element) {
-  //       items.add(TransactionModel(
-  //           element['amount'] as int,
-  //           element['date'] as DateTime,
-  //           element['note'],
-  //           element['type'],
-  //           element['selectedOption']));
-  //     });
-  //     return items;
-  //   }
-  // }
-
   _openCategoryDetailsScreen(String category) {
     Navigator.push(
       context,
@@ -84,9 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
     int totalBalance = 0;
     int totalIncome = 0;
     int totalExpense = 0;
-    getTotalBalance(
-        // List<TransactionModel> entireData
-        Map entireData) {
+    getTotalBalance(Map entireData) {
       totalBalance = 0;
       totalIncome = 0;
       totalExpense = 0;
@@ -99,13 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
           totalExpense += (value['amount'] as int);
         }
       });
-
-      // for (TransactionModel data in entireData) {
-      //   if(data.date.month== today.month){}
-      // }
     }
-
-    int _currentIndex = 0;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -123,6 +93,8 @@ class _HomeScreenState extends State<HomeScreen> {
         child: const Icon(Icons.add),
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Stack(
             children: [
@@ -193,17 +165,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                           return const Center(
                                               child:
                                                   CircularProgressIndicator());
-                                        } else if (snapshot.hasData) {
-                                          Map<dynamic, dynamic> map =
-                                              snapshot.data.snapshot.value;
-                                          return Text(
-                                            map['username'],
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 22,
-                                                color: white),
-                                          );
-                                        } else {
+                                        }
+                                        // else if (snapshot.hasData) {
+                                        //   Map<dynamic, dynamic> map =
+                                        //       snapshot.data.snapshot.value;
+                                        //   return Text(
+                                        //     map['username'],
+                                        //     style: TextStyle(
+                                        //         fontWeight: FontWeight.bold,
+                                        //         fontSize: 22,
+                                        //         color: white),
+                                        //   );
+                                        // }
+                                        else {
                                           return Center(
                                               child: Text(
                                             'Something Went Wrong',
@@ -235,22 +209,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: MediaQuery.of(context).size.height * .08,
                       ),
                       Center(
-                        child: FutureBuilder<Map>
-                            // <List<TransactionModel>>
-                            (
+                        child: FutureBuilder<Map>(
                             future: dbHelper.fetch(),
-                            // fetch(),
                             builder: (context, snapshot) {
-                              // print(snapshot.data);
                               if (snapshot.hasError) {
-                                return const Center(
-                                  child: Text(
-                                    "Oopssss !!! There is some error !",
-                                    style: TextStyle(
-                                      fontSize: 24.0,
-                                    ),
-                                  ),
-                                );
+                                return const Center(child: SizedBox()
+                                    // Text(
+                                    //   "Oopssss !!! There is some error !",
+                                    //   style: TextStyle(
+                                    //     fontSize: 24.0,
+                                    //   ),
+                                    // ),
+                                    );
                               }
                               if (snapshot.hasData) {
                                 if (snapshot.data!.isEmpty) {
@@ -352,14 +322,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ],
                                 );
                               } else {
-                                return Center(
-                                  child: Text(
-                                    "Oopssss !!! There is some error !",
-                                    style: TextStyle(
-                                      fontSize: 24.0,
-                                    ),
-                                  ),
-                                );
+                                return const Center(child: SizedBox()
+                                    // Text(
+                                    //   "Oopssss !!! There is some error !",
+                                    //   style: TextStyle(
+                                    //     fontSize: 24.0,
+                                    //   ),
+                                    // ),
+                                    );
                               }
                             }),
                       ),
@@ -367,38 +337,90 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller:
-                  // dataSingleton.mcategoryController,
-                  mcategoryController,
-              decoration: const InputDecoration(
-                labelText: 'Add Category',
-              ),
-            ),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.02,
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-                primary: ThemeColor1, onPrimary: white),
-            onPressed:
-                // dataSingleton.maddCategory(),
-                _addCategory,
-            child: const Text('Add'),
+          Container(
+            height: MediaQuery.of(context).size.height * 0.07,
+            width: MediaQuery.of(context).size.width * 0.9,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(15),
+              border: Border.all(color: ThemeColor1, width: 1.5),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Text(
+                  ' Add your Category',
+                  style: TextStyle(
+                    fontSize: 18.0,
+                  ),
+                ),
+                IconButton(
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: Text(
+                                'Create Category',
+                                style: TextStyle(color: ThemeColor1),
+                              ),
+                              content: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    TextFormField(
+                                      controller: mcategoryController,
+                                      decoration: const InputDecoration(
+                                        hintText: 'Type Category',
+                                        border: OutlineInputBorder(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              actions: [
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text('Cancel',
+                                        style: TextStyle(color: ThemeColor1))),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                      _addCategory();
+                                    },
+                                    child: Text('Add',
+                                        style: TextStyle(color: ThemeColor1))),
+                              ],
+                            );
+                          });
+                    },
+                    icon: FaIcon(
+                      FontAwesomeIcons.add,
+                      color: ThemeColor1,
+                    ))
+              ],
+            ),
           ),
           Expanded(
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                   maxCrossAxisExtent: 220,
                   childAspectRatio: 2,
-                  crossAxisSpacing: 10,
+                  crossAxisSpacing: 1,
                   mainAxisSpacing: 10),
               itemCount: //dataSingleton.mcategories.length,
                   mcategories.length,
               itemBuilder: (context, index) {
                 return ListTile(
                   title: Container(
-                      decoration: BoxDecoration(color: ThemeColor1),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: ThemeColor1),
+                      // decoration: BoxDecoration(color: ThemeColor1),
                       child: Center(
                           child: Text(
                         // dataSingleton.mcategories[index],
@@ -474,7 +496,7 @@ Widget cardExpense(String value) {
             20.0,
           ),
         ),
-        padding: EdgeInsets.all(
+        padding: const EdgeInsets.all(
           6.0,
         ),
         child: Icon(
@@ -540,10 +562,10 @@ Widget expenseTile(
                         size: 28.0,
                         color: Colors.red[700],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 4.0,
                       ),
-                      Text(
+                      const Text(
                         "Expense",
                         style: TextStyle(
                           fontSize: 20.0,
@@ -551,17 +573,6 @@ Widget expenseTile(
                       ),
                     ],
                   ),
-
-                  //
-                  // Padding(
-                  //   padding: const EdgeInsets.all(6.0),
-                  //   child: Text(
-                  //     "${date.day} ${[date.month - 1]} ",
-                  //     style: TextStyle(
-                  //       color: Colors.grey[800],
-                  //     ),
-                  //   ),
-                  // ),
                 ],
               ),
               Column(
@@ -569,7 +580,7 @@ Widget expenseTile(
                 children: [
                   Text(
                     "- $value",
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.w700,
                     ),
@@ -621,10 +632,10 @@ Widget incomeTile(
                     size: 28.0,
                     color: Colors.green[700],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 4.0,
                   ),
-                  Text(
+                  const Text(
                     "Credit",
                     style: TextStyle(
                       fontSize: 20.0,
@@ -632,17 +643,6 @@ Widget incomeTile(
                   ),
                 ],
               ),
-              //
-              // Padding(
-              //   padding: const EdgeInsets.all(6.0),
-              //   child: Text(
-              //     "${date.day} ${[date.month - 1]} ",
-              //     style: TextStyle(
-              //       color: Colors.grey[800],
-              //     ),
-              //   ),
-              // ),
-              //
             ],
           ),
           Column(
@@ -650,7 +650,7 @@ Widget incomeTile(
             children: [
               Text(
                 "+ $value",
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 24.0,
                   fontWeight: FontWeight.w700,
                 ),

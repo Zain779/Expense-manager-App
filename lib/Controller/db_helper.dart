@@ -26,6 +26,19 @@ class DbHelper {
     await box.deleteAt(index);
   }
 
+  Future updateData(
+    int index,
+    String note,
+    // int amount,
+  ) async {
+    var value = {
+      // 'amount': amount,
+      'note': note,
+    };
+    print('Data Updated');
+    await box.put(index, value);
+  }
+
   Future<Map> fetch() async {
     if (box.values.isEmpty) {
       return Future.value({});

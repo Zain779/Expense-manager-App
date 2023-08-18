@@ -1,14 +1,17 @@
 // import 'dart:js';
 
 import 'package:expanse_manager/Widgets/confirm_dialogue.dart';
+import 'package:expanse_manager/Widgets/expense_tile.dart';
+import 'package:expanse_manager/Widgets/income_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../Controller/db_helper.dart';
 import '../Utils/colors.dart';
 
 class CategoryDetailsScreen extends StatefulWidget {
-  final String category;
+  String? category = '';
 
   CategoryDetailsScreen({required this.category});
 
@@ -18,26 +21,20 @@ class CategoryDetailsScreen extends StatefulWidget {
 
 class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
   DbHelper dbHelper = DbHelper();
+  // final editController = TextEditingController();
+  final titleController = TextEditingController();
+  TextEditingController amountController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   int totalBalance = 0;
 
   int totalIncome = 0;
 
   int totalExpense = 0;
-  List<String> months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
 
   getTotalBalance(Map entireData) {
     totalBalance = 0;
@@ -101,29 +98,29 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                                 if (dataAtIndex['type'] == 'Income' &&
                                     dataAtIndex['selectOption'] ==
                                         widget.category) {
-                                  return incomeTile(
-                                      dataAtIndex['amount'],
-                                      dataAtIndex['note'],
-                                      dataAtIndex['date'],
-                                      index);
+                                  return IncomeTile(
+                                    amount: dataAtIndex['amount'],
+                                    note: dataAtIndex['note'],
+                                    date: dataAtIndex['date'],
+                                    index: index,
+                                  );
                                 } else if (dataAtIndex['type'] == 'Expense' &&
                                     dataAtIndex['selectOption'] ==
                                         widget.category) {
-                                  return expenseTile(
-                                    dataAtIndex['amount'],
-                                    dataAtIndex['note'],
-                                    dataAtIndex['date'],
-                                    index,
-                                  );
+                                  return ExpenseTile(
+                                      amount: dataAtIndex['amount'],
+                                      note: dataAtIndex['note'],
+                                      date: dataAtIndex['date'],
+                                      index: index);
                                 } else {
-                                  return SizedBox();
+                                  return const SizedBox();
                                 }
                               }),
                         )
                       ],
                     );
                   } else {
-                    return Center(
+                    return const Center(
                       child: Text(
                         "Oopssss !!! There is some error !",
                         style: TextStyle(
@@ -135,248 +132,6 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                 }),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget expenseTile(
-    int value,
-    String note,
-    DateTime date,
-    int index,
-  ) {
-    return Slidable(
-      startActionPane: ActionPane(motion: BehindMotion(), children: [
-        SlidableAction(
-          onPressed: (context) async {
-            bool? answer = await showConfirmDialog(
-                context, 'warning', 'Do you want to delete this record');
-            if (answer != null && answer) {
-              dbHelper.deleteData(index);
-              setState(() {});
-            }
-          },
-          icon: Icons.delete,
-          backgroundColor: Colors.red,
-        )
-      ]),
-      child: InkWell(
-        onLongPress: () async {
-          bool? answer = await showConfirmDialog(
-              context, 'warning', 'Do you want to delete this record');
-          if (answer != null && answer) {
-            dbHelper.deleteData(index);
-            setState(() {});
-          }
-        },
-        child: Container(
-          padding: const EdgeInsets.all(18.0),
-          margin: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-            color: Color(0xffced4eb),
-            borderRadius: BorderRadius.circular(
-              8.0,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.arrow_circle_up_outlined,
-                            size: 28.0,
-                            color: Colors.red[700],
-                          ),
-                          SizedBox(
-                            width: 4.0,
-                          ),
-                          Column(
-                            children: [
-                              Text(
-                                "Expense",
-                                style: TextStyle(
-                                  fontSize: 20.0,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(6.0),
-                                child: Text(
-                                  '${date.day} ${months[date.month - 1]}',
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-
-                      //
-                      // Padding(
-                      //   padding: const EdgeInsets.all(6.0),
-                      //   child: Text(
-                      //     "${date.day} ${[date.month - 1]} ",
-                      //     style: TextStyle(
-                      //       color: Colors.grey[800],
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        "- $value",
-                        style: TextStyle(
-                          fontSize: 24.0,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      //
-                      Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: Text(
-                          note,
-                          style: TextStyle(
-                            color: Colors.grey[800],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget incomeTile(
-    int value,
-    String note,
-    DateTime date,
-    int index,
-  ) {
-    return Slidable(
-      startActionPane: ActionPane(motion: BehindMotion(), children: [
-        SlidableAction(
-          onPressed: (context) async {
-            bool? answer = await showConfirmDialog(
-                context, 'warning', 'Do you want to delete this record');
-            if (answer != null && answer) {
-              dbHelper.deleteData(index);
-              setState(() {});
-            }
-          },
-          icon: Icons.delete,
-          backgroundColor: Colors.red,
-        )
-      ]),
-      child: InkWell(
-        onLongPress: () async {
-          bool? answer = await showConfirmDialog(
-              context, 'warning', 'Do you want to delete this record');
-          if (answer != null && answer) {
-            dbHelper.deleteData(index);
-            setState(() {});
-          }
-        },
-        child: Container(
-          padding: const EdgeInsets.all(18.0),
-          margin: const EdgeInsets.all(8.0),
-          decoration: BoxDecoration(
-            color: Color(0xffced4eb),
-            borderRadius: BorderRadius.circular(
-              8.0,
-            ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                children: [
-                  Row(
-                    children: [
-                      Icon(
-                        Icons.arrow_circle_down_outlined,
-                        size: 28.0,
-                        color: Colors.green[700],
-                      ),
-                      SizedBox(
-                        width: 4.0,
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            "Credit",
-                            style: TextStyle(
-                              fontSize: 20.0,
-                            ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(6.0),
-                            child: Text(
-                              '${date.day} ${months[date.month - 1]}',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  //
-                  // Padding(
-                  //   padding: const EdgeInsets.all(6.0),
-                  //   child: Text(
-                  //     "${date.day} ${[date.month - 1]} ",
-                  //     style: TextStyle(
-                  //       color: Colors.grey[800],
-                  //     ),
-                  //   ),
-                  // ),
-                  //
-                ],
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    "+ $value",
-                    style: TextStyle(
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  //
-                  //
-                  Padding(
-                    padding: const EdgeInsets.all(6.0),
-                    child: Text(
-                      note,
-                      style: TextStyle(
-                        color: Colors.grey[800],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
