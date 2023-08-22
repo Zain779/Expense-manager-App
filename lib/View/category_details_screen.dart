@@ -1,5 +1,6 @@
 // import 'dart:js';
 
+import 'package:expanse_manager/View/home_screen.dart';
 import 'package:expanse_manager/Widgets/confirm_dialogue.dart';
 import 'package:expanse_manager/Widgets/expense_tile.dart';
 import 'package:expanse_manager/Widgets/income_tile.dart';
@@ -28,28 +29,31 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
   @override
   void initState() {
     super.initState();
+    setState(() {});
   }
 
-  int totalBalance = 0;
+  // int totalBalance = 0;
 
-  int totalIncome = 0;
+  // int totalIncome = 0;
 
-  int totalExpense = 0;
+  // int totalExpense = 0;
 
-  getTotalBalance(Map entireData) {
-    totalBalance = 0;
-    totalIncome = 0;
-    totalExpense = 0;
-    entireData.forEach((key, value) {
-      if (value['type'] == 'Income') {
-        totalBalance += (value['amount'] as int);
-        totalIncome += (value['amount'] as int);
-      } else {
-        totalBalance -= (value['amount'] as int);
-        totalExpense += (value['amount'] as int);
-      }
-    });
-  }
+  // getTotalBalance(Map entireData) {
+  //   totalBalance = 0;
+  //   totalIncome = 0;
+  //   totalExpense = 0;
+  //   entireData.forEach((key, value) {
+  //     print(value);
+  //     print('Printing Value');
+  //     // if (value['type'] == 'Income') {
+  //     //   totalBalance += (value['amount'] as int);
+  //     //   totalIncome += (value['amount'] as int);
+  //     // } else {
+  //     //   totalBalance -= (value['amount'] as int);
+  //     //   totalExpense += (value['amount'] as int);
+  //     // }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +90,7 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                         ),
                       );
                     }
-                    getTotalBalance(snapshot.data!);
+                    // getTotalBalance(snapshot.data!);
                     return Column(
                       children: [
                         Expanded(
@@ -102,6 +106,8 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                                     amount: dataAtIndex['amount'],
                                     note: dataAtIndex['note'],
                                     date: dataAtIndex['date'],
+                                    type: dataAtIndex['type'],
+                                    selectedOption: dataAtIndex['selectOption'],
                                     index: index,
                                   );
                                 } else if (dataAtIndex['type'] == 'Expense' &&
@@ -111,6 +117,9 @@ class _CategoryDetailsScreenState extends State<CategoryDetailsScreen> {
                                       amount: dataAtIndex['amount'],
                                       note: dataAtIndex['note'],
                                       date: dataAtIndex['date'],
+                                      type: dataAtIndex['type'],
+                                      selectedOption:
+                                          dataAtIndex['selectOption'],
                                       index: index);
                                 } else {
                                   return const SizedBox();

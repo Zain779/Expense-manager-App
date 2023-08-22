@@ -10,8 +10,13 @@ class DbHelper {
     box = Hive.box('money');
   }
 
-  Future addData(int amount, DateTime date, String note, String type,
-      String selectedOption) async {
+  Future addData(
+    int amount,
+    DateTime date,
+    String note,
+    String type,
+    String selectedOption,
+  ) async {
     var value = {
       'amount': amount,
       'date': date,
@@ -28,15 +33,21 @@ class DbHelper {
 
   Future updateData(
     int index,
+    int amount,
+    DateTime date,
     String note,
-    // int amount,
+    String type,
+    String selectedOption,
   ) async {
     var value = {
-      // 'amount': amount,
+      'amount': amount,
+      'date': date,
+      'type': type,
       'note': note,
+      'selectOption': selectedOption
     };
     print('Data Updated');
-    await box.put(index, value);
+    await box.putAt(index, value);
   }
 
   Future<Map> fetch() async {

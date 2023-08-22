@@ -11,13 +11,17 @@ class ExpenseTile extends StatefulWidget {
   final String note;
   final DateTime date;
   final int index;
-  const ExpenseTile({
-    Key? key,
-    required this.amount,
-    required this.note,
-    required this.date,
-    required this.index,
-  }) : super(key: key);
+  final String type;
+  final String selectedOption;
+  const ExpenseTile(
+      {Key? key,
+      required this.amount,
+      required this.note,
+      required this.date,
+      required this.index,
+      required this.type,
+      required this.selectedOption})
+      : super(key: key);
 
   @override
   State<ExpenseTile> createState() => _ExpenseTileState();
@@ -57,7 +61,9 @@ class _ExpenseTileState extends State<ExpenseTile> {
         ),
         SlidableAction(
           onPressed: (context) async {
-            showEditDialogue(context, widget.note, widget.index);
+            await showEditDialogue(context, widget.note, widget.index,
+                widget.amount, widget.date, widget.type, widget.selectedOption);
+            setState(() {});
           },
           icon: Icons.edit,
           backgroundColor: Colors.blue,

@@ -59,6 +59,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     DbHelper dbHelper = DbHelper();
+    DateTime date = DateTime.now();
+    String note = '';
+    String type = '';
+    String selectedOption = '';
     int totalBalance = 0;
     int totalIncome = 0;
     int totalExpense = 0;
@@ -67,12 +71,16 @@ class _HomeScreenState extends State<HomeScreen> {
       totalIncome = 0;
       totalExpense = 0;
       entireData.forEach((key, value) {
+        print(value);
+        print('Printing Value');
         if (value['type'] == 'Income') {
           totalBalance += (value['amount'] as int);
           totalIncome += (value['amount'] as int);
         } else {
           totalBalance -= (value['amount'] as int);
           totalExpense += (value['amount'] as int);
+          // totalBalance -= 0;
+          // totalExpense += 0;
         }
       });
     }
@@ -153,40 +161,40 @@ class _HomeScreenState extends State<HomeScreen> {
                                     height: MediaQuery.of(context).size.height *
                                         .01,
                                   ),
-                                  StreamBuilder(
-                                      stream: ref
-                                          .child(SessionController()
-                                              .userID
-                                              .toString())
-                                          .onValue,
-                                      builder: (BuildContext context,
-                                          AsyncSnapshot snapshot) {
-                                        if (!snapshot.hasData) {
-                                          return const Center(
-                                              child:
-                                                  CircularProgressIndicator());
-                                        }
-                                        // else if (snapshot.hasData) {
-                                        //   Map<dynamic, dynamic> map =
-                                        //       snapshot.data.snapshot.value;
-                                        //   return Text(
-                                        //     map['username'],
-                                        //     style: TextStyle(
-                                        //         fontWeight: FontWeight.bold,
-                                        //         fontSize: 22,
-                                        //         color: white),
-                                        //   );
-                                        // }
-                                        else {
-                                          return Center(
-                                              child: Text(
-                                            'Something Went Wrong',
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .subtitle1,
-                                          ));
-                                        }
-                                      }),
+                                  // StreamBuilder(
+                                  //     stream: ref
+                                  //         .child(SessionController()
+                                  //             .userID
+                                  //             .toString())
+                                  //         .onValue,
+                                  //     builder: (BuildContext context,
+                                  //         AsyncSnapshot snapshot) {
+                                  //       if (!snapshot.hasData) {
+                                  //         return const Center(
+                                  //             child:
+                                  //                 CircularProgressIndicator());
+                                  //       }
+                                  //       // else if (snapshot.hasData) {
+                                  //       //   Map<dynamic, dynamic> map =
+                                  //       //       snapshot.data.snapshot.value;
+                                  //       //   return Text(
+                                  //       //     map['username'],
+                                  //       //     style: TextStyle(
+                                  //       //         fontWeight: FontWeight.bold,
+                                  //       //         fontSize: 22,
+                                  //       //         color: white),
+                                  //       //   );
+                                  //       // }
+                                  //       else {
+                                  //         return Center(
+                                  //             child: Text(
+                                  //           'Something Went Wrong',
+                                  //           style: Theme.of(context)
+                                  //               .textTheme
+                                  //               .subtitle1,
+                                  //         ));
+                                  //       }
+                                  //     }),
                                 ],
                               ),
                               Container(
@@ -223,16 +231,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                     );
                               }
                               if (snapshot.hasData) {
-                                if (snapshot.data!.isEmpty) {
-                                  return const Center(
-                                    child: Text(
-                                      "You haven't added Any Data !",
-                                      style: TextStyle(
-                                        fontSize: 24.0,
-                                      ),
-                                    ),
-                                  );
-                                }
+                                // if (snapshot.data!.isEmpty) {
+                                //   return const Center(
+                                //     child: Text(
+                                //       "You haven't added Any Data !",
+                                //       style: TextStyle(
+                                //         fontSize: 24.0,
+                                //       ),
+                                //     ),
+                                //   );
+                                // }
                                 getTotalBalance(snapshot.data!);
                                 return Column(
                                   children: [
@@ -287,10 +295,70 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       ),
                                                     ],
                                                   ),
-                                                  Icon(
-                                                    Icons.more_horiz_outlined,
-                                                    color: white,
-                                                  ),
+                                                  IconButton(
+                                                    onPressed: () {
+                                                      showDialog(
+                                                          context: context,
+                                                          builder: (context) {
+                                                            return AlertDialog(
+                                                              title: const Text(
+                                                                  'Add Your Balance'),
+                                                              content:
+                                                                  SingleChildScrollView(
+                                                                child: Column(
+                                                                  children: [
+                                                                    TextFormField(
+                                                                      decoration:
+                                                                          const InputDecoration(
+                                                                        hintText:
+                                                                            'Enter Balance',
+                                                                        border:
+                                                                            OutlineInputBorder(),
+                                                                      ),
+                                                                      onChanged:
+                                                                          (value) {
+                                                                        totalBalance =
+                                                                            int.parse(value);
+                                                                      },
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            20),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                              actions: [
+                                                                TextButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                    },
+                                                                    child: const Text(
+                                                                        'Cancel')),
+                                                                TextButton(
+                                                                    onPressed:
+                                                                        () async {
+                                                                      Navigator.pop(
+                                                                          context);
+                                                                      await dbHelper.addData(
+                                                                          totalBalance,
+                                                                          date,
+                                                                          note,
+                                                                          type,
+                                                                          selectedOption);
+                                                                    },
+                                                                    child: const Text(
+                                                                        'Add')),
+                                                              ],
+                                                            );
+                                                          });
+                                                    },
+                                                    icon: Icon(
+                                                      Icons.more_horiz_outlined,
+                                                      color: white,
+                                                    ),
+                                                  )
                                                 ],
                                               ),
                                               SizedBox(

@@ -11,12 +11,16 @@ class IncomeTile extends StatefulWidget {
   final String note;
   final DateTime date;
   final int index;
+  final String type;
+  final String selectedOption;
   const IncomeTile({
     Key? key,
     required this.amount,
     required this.note,
     required this.date,
     required this.index,
+    required this.type,
+    required this.selectedOption,
   }) : super(key: key);
 
   @override
@@ -57,7 +61,8 @@ class _IncomeTileState extends State<IncomeTile> {
         ),
         SlidableAction(
           onPressed: (context) async {
-            showEditDialogue(context, widget.note, widget.index);
+            showEditDialogue(context, widget.note, widget.index, widget.amount,
+                widget.date, widget.type, widget.selectedOption);
           },
           icon: Icons.edit,
           backgroundColor: Colors.blue,

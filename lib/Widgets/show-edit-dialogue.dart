@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import '../Controller/db_helper.dart';
 
-Future<void> showEditDialogue(
-  BuildContext context,
-  String title,
-  int index,
-  // int amount
-) async {
+Future<void> showEditDialogue(BuildContext context, String title, int index,
+    int amount, DateTime dateTime, String type, String selectedOption) async {
   DbHelper dbHelper = DbHelper();
   final titleController = TextEditingController();
   TextEditingController amountController = TextEditingController();
   titleController.text = title;
-  // amountController.text = amount;
+  amountController.text = "$amount";
   return await showDialog(
       context: context,
       builder: (context) {
@@ -28,14 +24,14 @@ Future<void> showEditDialogue(
                   ),
                 ),
                 const SizedBox(height: 20),
-                // TextFormField(
-                //   controller: amountController,
-                //   keyboardType: TextInputType.number,
-                //   decoration: const InputDecoration(
-                //     hintText: 'Edit amount',
-                //     border: OutlineInputBorder(),
-                //   ),
-                // ),
+                TextFormField(
+                  controller: amountController,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    hintText: 'Edit amount',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
               ],
             ),
           ),
@@ -46,13 +42,12 @@ Future<void> showEditDialogue(
                 },
                 child: Text('cancel')),
             TextButton(
-                onPressed: () {
+                onPressed: () async {
                   Navigator.pop(context);
                   title = titleController.text.toString();
-                  // amount = int.parse(amountController.text);
-                  dbHelper.updateData(index, title
-                      // amount
-                      );
+                  amount = int.parse(amountController.text);
+                  await dbHelper.updateData(
+                      index, amount, dateTime, title, type, selectedOption);
                 },
                 child: Text('update')),
           ],

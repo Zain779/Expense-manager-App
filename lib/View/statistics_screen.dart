@@ -174,6 +174,9 @@ class _StatisticsScreenState extends State<StatisticsScreen> {
                                       amount: dataAtIndex['amount'],
                                       note: dataAtIndex['note'],
                                       date: dataAtIndex['date'],
+                                      type: dataAtIndex['type'],
+                                      selectedOption:
+                                          dataAtIndex['selectOption'],
                                       index: index);
                                 } else {
                                   return const SizedBox();
